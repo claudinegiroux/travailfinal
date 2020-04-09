@@ -1,0 +1,55 @@
+#coding: utf-8
+
+import requests, csv
+from bs4 import BeautifulSoup
+
+url= "https://uda.ca/bottin?page="
+
+fichier ="donneesUDA.csv"
+donneesUDA=[]
+
+entetes ={
+    "User-Agent": "Claudine Giroux, étudiante en journalisme"
+    }
+
+page= list(range(0,576))
+
+for numero in page:
+    numero= str(numero)
+
+    urlPage = url+ str(numero)
+
+    print(urlPage)
+
+    #donneesUDA.append(urlPage)
+
+    site = requests.get(urlPage, headers=entetes)
+
+    #print(site.status_code)
+
+    page = BeautifulSoup(site.text, "html.parser")
+
+    #print(page)
+
+    photos= page.find_all("a", class_="artist-link")
+
+    for photo in photos:
+        #print(photo.find("img")["src"])
+        lienphoto= photo.find("img")["src"]
+        if "image-placeholder.png" not in lienphoto:
+            print(lienphoto)
+            donneesUDA.append(lienphoto)
+
+            nom=photo.find("h3", class_="field-content").text.strip()
+            print(nom)
+            donneesUDA.append(nom)
+
+
+
+    #print(photos)
+
+    print("."*10)
+
+    dead= open(fichier,"a")
+    obies=csv.writer(dead)
+    obies.writerow(donneesUDA)
