@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 url= "https://uda.ca/bottin?page="
 
 fichier ="donneesUDA.csv"
-donneesUDA=[]
+
 
 entetes ={
     "User-Agent": "Claudine Giroux, étudiante en journalisme"
@@ -37,6 +37,7 @@ for numero in page:
         #print(photo.find("img")["src"])
         lienphoto= photo.find("img")["src"]
         if "image-placeholder.png" not in lienphoto:
+            donneesUDA=[]
             print(lienphoto)
             donneesUDA.append(lienphoto)
 
@@ -44,12 +45,13 @@ for numero in page:
             print(nom)
             donneesUDA.append(nom)
 
+            dead= open(fichier,"a")
+            obies=csv.writer(dead)
+            obies.writerow(donneesUDA)
+
 
 
     #print(photos)
 
     print("."*10)
 
-    dead= open(fichier,"a")
-    obies=csv.writer(dead)
-    obies.writerow(donneesUDA)
