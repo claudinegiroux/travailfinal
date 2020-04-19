@@ -1,0 +1,53 @@
+# coding utf-8
+
+from azure.cognitiveservices.vision.computervision import ComputerVisionClient
+from azure.cognitiveservices.vision.computervision.models import TextOperationStatusCodes
+from azure.cognitiveservices.vision.computervision.models import TextRecognitionMode
+from azure.cognitiveservices.vision.computervision.models import VisualFeatureTypes
+from msrest.authentication import CognitiveServicesCredentials
+
+from array import array
+from PIL import Image
+import sys
+import time
+
+cle = "862d5b3d0e4e493db0cf4dc5b9add8f4" ### CHANGE POUR TA CLÉ À TOI
+point = "https://cgiroux.cognitiveservices.azure.com/" ### CHANGE POUR TON ENDPOINT À TOI
+
+oeil = ComputerVisionClient(point, CognitiveServicesCredentials(cle))
+
+### IMAGE CHOISIE TOTALEMENT AU HASARD DANS LE BOTTIN DE L'UDA
+url = "https://uda.ca/sites/default/files/images/artistes/191116/191116_1.jpg"
+
+### DESCRIPTION ###
+
+description = oeil.describe_image(url ) ### ICI, L'ESPACE APRÈS LE NOM DE LA VARIABLE EST IMPORTANT
+
+if len(description.captions) == 0:
+    print("Flûte à bec! Aucune description détectée...")
+else:
+    for caption in description.captions:
+        print("'{}' avec degré de confiance de {:.2f}%".format(caption.text, caption.confidence * 100))
+
+### CATÉGORIES ###
+
+caracteristiques = ["categories"]
+
+cats = oeil.analyze_image(url , caracteristiques) ### ICI, L'ESPACE APRÈS LE NOM DE LA VARIABLE SEMBLE TOUJOURS AUSSI IMPORTANT
+
+if len(cats.categories) == 0:
+    print("Ciboulôt! Pas de catégories détectées...")
+else:
+    for category in cats.categories:
+        print("'{}' avec degré de confiance de {:.2f}%".format(category.name, category.score * 100))
+
+### ÉTIQUETTES OU MOTS-CLÉS ###
+
+mestags = oeil.tag_image(url )
+
+# Print results with confidence score
+if len(mestags.tags) == 0:
+    print("Dang! Pas de tags trouvés...")
+else:
+    for tag in mestags.tags:
+        print("'{}' avec degré de confiance de {:.2f}%".format(tag.name, tag.confidence * 100))
